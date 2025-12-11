@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <title>Игра: Уравновешивание весов</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="game-wrapper">
+    <header class="game-header">
+      <div class="header-top">
+        <h2>Уравновешивание весов</h2>
+        <div class="player-info">
+          <span class="player-name" id="player-name-display">Игрок</span>
+          <div class="nav-links">
+            <button id="rules-btn" class="rules-btn">Правила</button>
+            <a href="rating.html" class="nav-link">Рейтинг</a>
+            <a href="login.html" class="nav-link">Сменить игрока</a>
+          </div>
+        </div>
+      </div>
+      <div class="controls">
+        <div class="difficulty">
+          <span>Сложность:</span>
+          <button data-diff="easy" class="diff-btn active">Лёгкий</button>
+          <button data-diff="medium" class="diff-btn">Средний</button>
+          <button data-diff="hard" class="diff-btn">Сложный</button>
+        </div>
+        <div class="level-selection">
+          <span>Уровень:</span>
+          <button data-level="0" class="level-btn active">1</button>
+          <button data-level="1" class="level-btn">2</button>
+          <button data-level="2" class="level-btn">3</button>
+        </div>
+        <div class="info-panel">
+          <div><strong>Уровень:</strong> <span id="current-level">Легкий 1</span></div>
+          <div><strong>Осталось:</strong> <span id="time-left">60.0</span> c</div>
+        </div>
+        <button id="start-btn">Начать игру</button>
+        <button id="restart-btn" style="display: none;">Начать заново</button>
+        <button id="unlock-all-btn" class="unlock-all-btn">🔓 Разблокировать все</button>
+      </div>
+    </header>
+
+    <main class="game-main">
+      <section class="table-section">
+        <div id="table" class="drop-zone table-zone" data-zone="table"></div>
+        <div class="table-capacity">
+          Вместимость стола: <span id="table-capacity-text"></span>
+        </div>
+      </section>
+
+      <section class="scale-section">
+        <div class="fall-area" id="fall-area">
+          <div class="scale-wrapper">
+            <div class="scale-base"></div>
+            <div class="scale-pillar"></div>
+            <div class="scale-arm" id="scale-arm">
+              <div class="scale-pan left-pan">
+                <div class="drop-zone pan-zone" id="left-pan" data-zone="left-pan"></div>
+                <div class="pan-weight-label" id="left-weight-label">0</div>
+              </div>
+              <div class="scale-pan right-pan">
+                <div class="drop-zone pan-zone fixed-right" id="right-pan" data-zone="right-pan"></div>
+                <div class="pan-weight-label" id="right-weight-label">0</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <div class="message" id="message"></div>
+
+    <!-- Модальное окно правил -->
+    <div id="rules-modal" class="modal">
+      <div class="modal-content">
+        <span class="modal-close">&times;</span>
+        <h2 id="rules-title">Правила игры</h2>
+        <div id="rules-content"></div>
+      </div>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
+
+

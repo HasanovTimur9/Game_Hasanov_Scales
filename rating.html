@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <title>Рейтинг - Уравновешивание весов</title>
+  <link rel="stylesheet" href="rating.css">
+</head>
+<body>
+  <div class="rating-container">
+    <div class="rating-card">
+      <h1>Таблица рекордов</h1>
+      <p>Лучшие результаты игроков</p>
+
+      <div class="filters">
+        <button class="filter-btn active" data-difficulty="all">Все</button>
+        <button class="filter-btn" data-difficulty="easy">Лёгкий</button>
+        <button class="filter-btn" data-difficulty="medium">Средний</button>
+        <button class="filter-btn" data-difficulty="hard">Сложный</button>
+      </div>
+
+      <div class="rating-table">
+        <div class="table-header">
+          <div class="col-rank">Место</div>
+          <div class="col-name">Игрок</div>
+          <div class="col-score">Очки</div>
+          <div class="col-time">Время</div>
+          <div class="col-difficulty">Сложность</div>
+          <div class="col-date">Дата</div>
+        </div>
+        <div id="rating-body" class="table-body"></div>
+      </div>
+
+      <div class="no-results" id="no-results">
+        Пока нет результатов. Сыграйте в игру!
+      </div>
+
+      <div class="navigation">
+        <a href="login.html" class="nav-btn">Назад</a>
+        <button id="clear-rating-btn" class="nav-btn danger">Очистить рейтинг</button>
+        <a href="index.html" class="nav-btn primary">Играть</a>
+      </div>
+    </div>
+  </div>
+
+  <script src="rating.js"></script>
+</body>
+</html>
