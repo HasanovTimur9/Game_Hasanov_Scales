@@ -197,9 +197,10 @@ function saveGameProgress() {
 }
 
 function unlockNextLevel() {
-  gameProgress[currentDifficultyKey] = Math.max(gameProgress[currentDifficultyKey] || 0, currentDifficultyIndex + 2);
+  const newProgress = Math.max(gameProgress[currentDifficultyKey] || 0, currentDifficultyIndex + 2);
+  gameProgress[currentDifficultyKey] = newProgress;
 
-  if (currentDifficultyIndex >= 2) {
+  if (gameProgress[currentDifficultyKey] >= 4) {
     if (currentDifficultyKey === 'easy' && gameProgress.medium === 0) {
       gameProgress.medium = 1;
     } else if (currentDifficultyKey === 'medium' && gameProgress.hard === 0) {
@@ -314,8 +315,8 @@ function updateDifficultyButtons() {
   diffButtons.forEach((btn) => {
     const key = btn.dataset.diff;
     const isUnlocked = (key === 'easy') ||
-                      (key === 'medium' && gameProgress.easy >= 3) ||
-                      (key === 'hard' && gameProgress.medium >= 3) ||
+                      (key === 'medium' && gameProgress.medium >= 1) ||
+                      (key === 'hard' && gameProgress.hard >= 1) ||
                       (gameProgress[key] >= 4);
 
     btn.disabled = !isUnlocked;
@@ -839,14 +840,34 @@ function updateWeightsForZones() {
     totalDifficultyTime += levelTime;
 
     unlockNextLevel();
+    updateDifficultyButtons();
+    updateLevelButtons();
     const nextLevel = getNextLevel();
 
     if (nextLevel) {
       setTimeout(() => {
         currentDifficultyKey = nextLevel.difficultyKey;
         currentDifficultyIndex = nextLevel.difficultyIndex;
-        initGame(currentDifficultyKey, currentDifficultyIndex);
+
+        diffButtons.forEach((b) => {
+          if (b.dataset.diff === currentDifficultyKey) {
+            b.classList.add("active");
+          } else {
+            b.classList.remove("active");
+          }
+        });
+
+        levelButtons.forEach((b, index) => {
+          if (index === currentDifficultyIndex) {
+            b.classList.add("active");
+          } else {
+            b.classList.remove("active");
+          }
+        });
+
         updateLevelButtons();
+        updateDifficultyButtons();
+        initGame(currentDifficultyKey, currentDifficultyIndex);
       }, 2000);
 
       messageEl.textContent = `Отлично! Переход на следующий уровень...`;
@@ -942,8 +963,8 @@ diffButtons.forEach((btn) => {
     const key = btn.dataset.diff;
     if (!key || !DIFFICULTIES[key]) return;
 
-    if ((key === 'medium' && gameProgress.easy < 3) ||
-        (key === 'hard' && gameProgress.medium < 3)) {
+    if ((key === 'medium' && gameProgress.medium < 1) ||
+        (key === 'hard' && gameProgress.hard < 1)) {
       return;
     }
 

@@ -120,10 +120,20 @@ document.addEventListener('DOMContentLoaded', () => {
   const clearRatingBtn = document.getElementById('clear-rating-btn');
   if (clearRatingBtn) {
     clearRatingBtn.addEventListener('click', () => {
-      if (confirm('Вы уверены, что хотите очистить весь рейтинг? Это действие нельзя отменить.')) {
+      if (confirm('Вы уверены, что хотите очистить весь рейтинг и историю прогресса всех пользователей? Это действие нельзя отменить.')) {
+        // Удаляем результаты игры
         localStorage.removeItem('gameResults');
+
+        // Удаляем весь прогресс пользователей
+        for (let i = localStorage.length - 1; i >= 0; i--) {
+          const key = localStorage.key(i);
+          if (key && key.startsWith('gameProgress_')) {
+            localStorage.removeItem(key);
+          }
+        }
+
         loadRating();
-        alert('Рейтинг очищен!');
+        alert('Рейтинг и история прогресса всех пользователей очищены!');
       }
     });
   }
