@@ -103,6 +103,7 @@ let nextWeightId = 1;
 let capturedWeight = null;
 let isEasyMode = false;
 let isMediumMode = false;
+
 const timeLeftSpan = document.getElementById("time-left");
 const currentLevelDisplay = document.getElementById("current-level");
 const startBtn = document.getElementById("start-btn");
@@ -124,6 +125,7 @@ const rulesBtn = document.getElementById("rules-btn");
 const rulesModal = document.getElementById("rules-modal");
 const rulesTitle = document.getElementById("rules-title");
 const rulesContent = document.getElementById("rules-content");
+
 function randomInt(min, max) {
   return Math.floor(Math.random() * (max - min + 1)) + min;
 }
@@ -346,7 +348,6 @@ function resetAllWeights() {
 }
 
 function initGame(difficultyKey, difficultyIndex = 0) {
-  spawnGeneration += 1;
   spawnGeneration += 1;
   currentDifficultyKey = difficultyKey;
   currentDifficultyIndex = difficultyIndex;
@@ -812,6 +813,33 @@ function placeWeightInZone(weightEl, zone, event) {
 
       capturePlacedWeightMedium(weightEl, e.clientX, e.clientY);
     });
+
+    // Двойной клик для удаления гири на среднем уровне
+    weightEl.addEventListener("dblclick", (e) => {
+      if (!running || !isMediumMode) return;
+      if (weightEl.classList.contains("target")) return;
+      e.preventDefault();
+      e.stopPropagation();
+
+      // Получить позицию гири для эффекта частиц
+      const rect = weightEl.getBoundingClientRect();
+      const centerX = rect.left + rect.width / 2;
+      const centerY = rect.top + rect.height / 2;
+
+      // Создать эффект частиц
+      createParticleEffect(centerX, centerY);
+
+      // Если эта гиря была захвачена, очистить capturedWeight
+      if (capturedWeight && capturedWeight.el === weightEl) {
+        capturedWeight = null;
+        highlightDropZones(false);
+        messageEl.textContent = "";
+      }
+
+      weightEl.remove();
+      fallingWeights.delete(Number(weightEl.dataset.id));
+      updateWeightsForZones();
+    });
   }
 }
 
@@ -1179,6 +1207,73 @@ function capturePlacedWeightMedium(weightEl, clientX, clientY) {
   highlightDropZones(true);
 
   document.addEventListener('click', handleMediumPlacement, { once: true });
+}
+
+function createParticleEffect(x, y, color = '#f1f5f9') {
+  const particleCount = 10;
+  const particles = [];
+  let lastTime = performance.now();
+
+  for (let i = 0; i < particleCount; i++) {
+    const particle = document.createElement('div');
+
+    Object.assign(particle.style, {
+      position: 'fixed',
+      left: `${x}px`,
+      top: `${y}px`,
+      width: '4px',
+      height: '4px',
+      backgroundColor: color,
+      borderRadius: '50%',
+      pointerEvents: 'none',
+      zIndex: '9999',
+      transform: 'translate(0, 0)',
+      opacity: '1' // ← сразу видим
+    });
+
+    const angle = Math.random() * Math.PI * 2;
+    const speed = 35 + Math.random() * 55; // быстрее
+
+    particle.vx = Math.cos(angle) * speed;
+    particle.vy = Math.sin(angle) * speed - 30;
+
+    particle.x = 0;
+    particle.y = 0;
+    particle.life = 1.5; // ← живут дольше
+
+    document.body.appendChild(particle);
+    particles.push(particle);
+  }
+
+  function animate(time) {
+    const delta = (time - lastTime) / 1000;
+    lastTime = time;
+
+    let alive = false;
+
+    particles.forEach(p => {
+      if (p.life > 0) {
+        alive = true;
+
+        // физика
+        p.vy += 90 * delta;        // мягкая гравитация
+        p.x += p.vx * delta;
+        p.y += p.vy * delta;
+
+        // медленное затухание
+        p.life -= delta * 0.6;
+        p.style.opacity = Math.max(0, p.life / 1.5);
+
+        p.style.transform = `translate(${p.x}px, ${p.y}px)`;
+      } else {
+        p.remove();
+      }
+    });
+
+    if (alive) requestAnimationFrame(animate);
+  }
+
+  requestAnimationFrame(animate);
 }
 
 function placeCapturedWeightMedium(zoneName, clientX, clientY) {
